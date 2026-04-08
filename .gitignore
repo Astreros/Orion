@@ -1,0 +1,14 @@
+# Fichiers de configuration sensibles
+.env
+.env.local
+.env.*.local
+
+# Fichiers de cache et logs
+/var/cache/*
+/var/logs/*
+/var/sessions/*
+
+# Fichiers IDE et système
+.idea/
+.vscode/
+.DS_Store
