@@ -14,5 +14,7 @@
     {% if app.user %}
         <a href="{{ path('app_logout') }}">Déconnexion</a>
     {% endif %}
+
+    <img src="{{ QRCode }}" alt="QR Code" />
 </div>
 {% endblock %}

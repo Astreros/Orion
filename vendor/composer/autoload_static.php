@@ -129,6 +129,10 @@ class ComposerStaticInit7246353e5bb23c8719402c051dcd5671
         array (
             'Monolog\\' => 8,
         ),
+        'F' =>
+        array (
+            'Firebase\\JWT\\' => 13,
+        ),
         'E' =>
         array (
             'Endroid\\QrCode\\' => 15,
@@ -505,6 +509,10 @@ class ComposerStaticInit7246353e5bb23c8719402c051dcd5671
         'Monolog\\' =>
         array (
             0 => __DIR__ . '/..' . '/monolog/monolog/src/Monolog',
+        ),
+        'Firebase\\JWT\\' =>
+        array (
+            0 => __DIR__ . '/..' . '/firebase/php-jwt/src',
         ),
         'Endroid\\QrCode\\' =>
         array (
