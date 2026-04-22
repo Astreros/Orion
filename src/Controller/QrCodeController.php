@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\QRCode;
 use App\Entity\Utilisateur;
 use App\Service\TokenGeneratorService;
+use DateMalformedStringException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +14,9 @@ use Symfony\Component\Routing\Attribute\Route;
 class QrCodeController extends AbstractController
 {
     // Création d'un QR code pour un utilisateur spécifique
+    /**
+     * @throws DateMalformedStringException
+     */
     #[Route('/admin/add-qrcode/{userId}', name: 'add.qrcode', methods: ['GET', 'POST'])]
     public function addQRCode(int $userId, TokenGeneratorService $tokenGeneratorService, EntityManagerInterface $entityManager): Response
     {
@@ -36,7 +40,7 @@ class QrCodeController extends AbstractController
         $data = ['user_id' => $user->getId()];
         $token = $tokenGeneratorService->generateToken($data, 3600);
 
-        $date = new \DateTime();
+        $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
         $dateExpiration = (clone $date)->add(new \DateInterval('PT3600S'));
 
         // Créer et sauvegarder le QR code
@@ -51,8 +55,8 @@ class QrCodeController extends AbstractController
         $entityManager->flush();
 
         // Redirige vers l'espace d'administration
-        $this->addFlash('success', sprintf('QR Code généré avec succès pour l\'utilisateur %s', $user->getEmail()));
-        return $this->redirectToRoute('show.admin');
+        $this->addFlash('success', 'QR Code généré avec succès.');
+        return $this->redirectToRoute('show.qrcode');
     }
 
     // Désactive un QR code
@@ -63,10 +67,10 @@ class QrCodeController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'QR Code désactivé avec succès.');
-        return $this->redirectToRoute('show.admin');
+        return $this->redirectToRoute('show.qrcode');
     }
 
-    // Désactive un QR code
+    // Active un QR code
     #[Route('/admin/enable-qrcode/{id}', name: 'enable.qrcode', methods: ['GET', 'POST'])]
     public function enableQRCode(QRCode $qrCode, EntityManagerInterface $entityManager): Response
     {
@@ -74,7 +78,7 @@ class QrCodeController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'QR Code activé avec succès.');
-        return $this->redirectToRoute('show.admin');
+        return $this->redirectToRoute('show.qrcode');
     }
 
     // Supprime un QR code
@@ -85,6 +89,6 @@ class QrCodeController extends AbstractController
         $entityManager->flush();
 
         $this->addFlash('success', 'QR Code supprimé avec succès.');
-        return $this->redirectToRoute('show.admin');
+        return $this->redirectToRoute('show.qrcode');
     }
 }

@@ -68,6 +68,8 @@
                                         <a href="{{ path('enable.qrcode', {'id': qrCode.id}) }}" class="btn btn-success btn-sm">Activer</a>
                                     {% endif %}
                                     <a href="{{ path('delete.qrcode', {'id': qrCode.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce QR Code ?')">Supprimer</a>
+                                    <br>
+                                    <a href="{{ path('add.qrcode', {'userId': qrCode.utilisateur.id}) }}" class="btn btn-danger btn-sm">Générer à nouveau</a>
                                 </div>
                             </td>
                         </tr>

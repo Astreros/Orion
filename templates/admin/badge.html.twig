@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Administration{% endblock %}
+{% block title %}Administration Bage{% endblock %}
 
 {% block body %}
     <style>
@@ -9,7 +9,7 @@
     </style>
 
     <div class="example-wrapper">
-        <h1>Accueil administration ✅</h1>
+        <h1>Administration des Badges</h1>
 
         {% if app.user %}
             <a href="{{ path('app_logout') }}">Déconnexion</a>
@@ -18,12 +18,7 @@
         <br>
         <br>
 
-        <a href="{{ path('show.qrcode') }}">Administration des QR Code</a>
+        <a href="{{ path('show.admin') }}">Retour Accueil Administration</a>
         <br>
-
-        <a href="{{ path('show.code') }}">Administration des Code PIN</a>
-        <br>
-
-        <a href="{{ path('show.badge') }}">Administration des Badge</a>
     </div>
 {% endblock %}

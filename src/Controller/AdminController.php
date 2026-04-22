@@ -17,7 +17,7 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/admin/qrcode', name: 'show.qrcode')]
-    public function inde(QRCodeRepository $QRCodeRepository, QrCodeGeneratorService $qrCodeGeneratorService): Response
+    public function adminQrCode(QRCodeRepository $QRCodeRepository, QrCodeGeneratorService $qrCodeGeneratorService): Response
     {
         $qrCodes = $QRCodeRepository->findAll();
 
@@ -29,5 +29,17 @@ final class AdminController extends AbstractController
         return $this->render('admin/qrcode.html.twig', [
             'qrCodes' => $qrCodes,
         ]);
+    }
+
+    #[Route('/admin/code', name: 'show.code')]
+    public function adminCode(): Response
+    {
+        return $this->render('admin/code.html.twig');
+    }
+
+    #[Route('/admin/badge', name: 'show.badge')]
+    public function adminBadge(): Response
+    {
+        return $this->render('admin/badge.html.twig');
     }
 }
