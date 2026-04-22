@@ -22,6 +22,8 @@ use SebastianBergmann\CodeCoverage\Driver\XdebugDriver;
 /**
  * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
  *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for phpunit/php-code-coverage
+ *
  * @phpstan-import-type XdebugFunctionCoverageType from XdebugDriver
  *
  * @phpstan-type TestIdType string
@@ -211,6 +213,8 @@ final class ProcessedCodeCoverageData
      * 4 = the line has been tested
      *
      * During a merge, a higher number is better.
+     *
+     * @param array<int, null|list<TestIdType>> $data
      *
      * @return 1|2|3|4
      */

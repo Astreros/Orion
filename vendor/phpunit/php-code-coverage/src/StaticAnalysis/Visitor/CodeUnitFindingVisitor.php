@@ -32,6 +32,8 @@ use SebastianBergmann\Complexity\CyclomaticComplexityCalculatingVisitor;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for phpunit/php-code-coverage
  */
 final class CodeUnitFindingVisitor extends NodeVisitorAbstract
 {
@@ -105,7 +107,7 @@ final class CodeUnitFindingVisitor extends NodeVisitorAbstract
             return null;
         }
 
-        if (!$node instanceof Class_ && !$node instanceof Trait_) {
+        if (!$node instanceof Class_ && !$node instanceof Enum_ && !$node instanceof Trait_) {
             return null;
         }
 
@@ -396,11 +398,11 @@ final class CodeUnitFindingVisitor extends NodeVisitorAbstract
     /**
      * @param list<non-empty-string> $traits
      */
-    private function postProcessClassOrTrait(Class_|Trait_ $node, array $traits): void
+    private function postProcessClassOrTrait(Class_|Enum_|Trait_ $node, array $traits): void
     {
         $name = $node->namespacedName->toString();
 
-        if ($node instanceof Class_) {
+        if ($node instanceof Class_ || $node instanceof Enum_) {
             assert(isset($this->classes[$name]));
 
             $this->classes[$name] = new \SebastianBergmann\CodeCoverage\StaticAnalysis\Class_(

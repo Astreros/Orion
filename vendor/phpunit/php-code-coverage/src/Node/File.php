@@ -15,6 +15,7 @@ use function range;
 use SebastianBergmann\CodeCoverage\CodeCoverage;
 use SebastianBergmann\CodeCoverage\Data\ProcessedBranchCoverageData;
 use SebastianBergmann\CodeCoverage\Data\ProcessedClassType;
+use SebastianBergmann\CodeCoverage\Data\ProcessedFunctionCoverageData;
 use SebastianBergmann\CodeCoverage\Data\ProcessedFunctionType;
 use SebastianBergmann\CodeCoverage\Data\ProcessedMethodType;
 use SebastianBergmann\CodeCoverage\Data\ProcessedPathCoverageData;
@@ -28,6 +29,8 @@ use SebastianBergmann\CodeCoverage\StaticAnalysis\Trait_;
 
 /**
  * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for phpunit/php-code-coverage
  *
  * @phpstan-import-type TestType from CodeCoverage
  * @phpstan-import-type LinesType from AnalysisResult
@@ -43,6 +46,10 @@ final class File extends AbstractNode
      * @var array<int, ?list<non-empty-string>>
      */
     private array $lineCoverageData;
+
+    /**
+     * @var array<string, ProcessedFunctionCoverageData>
+     */
     private array $functionCoverageData;
 
     /**
@@ -80,17 +87,18 @@ final class File extends AbstractNode
     private ?int $numTestedFunctions = null;
 
     /**
-     * @var array<int, array|array{0: Class_, 1: string}|array{0: Function_|ProcessedFunctionType|ProcessedMethodType}|array{0: Trait_, 1: string}>
+     * @var array<int, array<int, ProcessedClassType|ProcessedFunctionType|ProcessedMethodType|ProcessedTraitType>>
      */
     private array $codeUnitsByLine = [];
 
     /**
-     * @param non-empty-string                    $sha1
-     * @param array<int, ?list<non-empty-string>> $lineCoverageData
-     * @param array<string, TestType>             $testData
-     * @param array<string, Class_>               $classes
-     * @param array<string, Trait_>               $traits
-     * @param array<string, Function_>            $functions
+     * @param non-empty-string                             $sha1
+     * @param array<int, ?list<non-empty-string>>          $lineCoverageData
+     * @param array<string, ProcessedFunctionCoverageData> $functionCoverageData
+     * @param array<string, TestType>                      $testData
+     * @param array<string, Class_>                        $classes
+     * @param array<string, Trait_>                        $traits
+     * @param array<string, Function_>                     $functions
      */
     public function __construct(string $name, AbstractNode $parent, string $sha1, array $lineCoverageData, array $functionCoverageData, array $testData, array $classes, array $traits, array $functions, LinesOfCode $linesOfCode)
     {
@@ -126,6 +134,9 @@ final class File extends AbstractNode
         return $this->lineCoverageData;
     }
 
+    /**
+     * @return array<string, ProcessedFunctionCoverageData>
+     */
     public function functionCoverageData(): array
     {
         return $this->functionCoverageData;
@@ -378,7 +389,7 @@ final class File extends AbstractNode
             $trait->crap     = new CrapIndex($trait->ccn, $traitPathCoverage > 0 ? $traitPathCoverage : $traitLineCoverage)->asString();
 
             if ($trait->executableLines > 0 && $trait->coverage === 100) {
-                $this->numTestedClasses++;
+                $this->numTestedTraits++;
             }
         }
 

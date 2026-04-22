@@ -244,11 +244,15 @@ final class Help
                 ['spacer' => ''],
 
                 ['arg' => '--order-by <order>', 'desc' => 'Run tests in order: default|defects|depends|duration|no-depends|random|reverse|size'],
+                ['arg' => '--resolve-dependencies', 'desc' => 'Alias for "--order-by depends"'],
+                ['arg' => '--ignore-dependencies', 'desc' => 'Alias for "--order-by no-depends"'],
+                ['arg' => '--random-order', 'desc' => 'Alias for "--order-by random"'],
                 ['arg' => '--random-order-seed <N>', 'desc' => 'Use the specified random seed when running tests in random order'],
+                ['arg' => '--reverse-order', 'desc' => 'Alias for "--order-by reverse"'],
             ],
 
             'Reporting' => [
-                ['arg' => '--colors <flag>', 'desc' => 'Use colors in output ("never", "auto" or "always")'],
+                ['arg' => '--colors=<flag>', 'desc' => 'Use colors in output ("never", "auto" or "always")'],
                 ['arg'    => '--columns <n>', 'desc' => 'Number of columns to use for progress output'],
                 ['arg'    => '--columns max', 'desc' => 'Use maximum number of columns for progress output'],
                 ['arg'    => '--stderr', 'desc' => 'Write to STDERR instead of STDOUT'],
@@ -283,12 +287,12 @@ final class Help
             'Logging' => [
                 ['arg' => '--log-junit <file>', 'desc' => 'Write test results in JUnit XML format to file'],
                 ['arg' => '--log-otr <file>', 'desc' => 'Write test results in Open Test Reporting XML format to file'],
-                ['arg' => '--include-git-information', 'desc' => 'Include Git information in Open Test Reporting XML logfile'],
                 ['arg' => '--log-teamcity <file>', 'desc' => 'Write test results in TeamCity format to file'],
                 ['arg' => '--testdox-html <file>', 'desc' => 'Write test results in TestDox format (HTML) to file'],
                 ['arg' => '--testdox-text <file>', 'desc' => 'Write test results in TestDox format (plain text) to file'],
                 ['arg' => '--log-events-text <file>', 'desc' => 'Stream events as plain text to file'],
                 ['arg' => '--log-events-verbose-text <file>', 'desc' => 'Stream events as plain text with extended information to file'],
+                ['arg' => '--include-git-information', 'desc' => 'Include Git information in supported formats'],
                 ['arg' => '--no-logging', 'desc' => 'Ignore logging configured in the XML configuration file'],
             ],
 

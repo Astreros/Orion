@@ -16,13 +16,18 @@ use function preg_match;
 use function range;
 use function str_replace;
 use function time;
-use DOMImplementation;
-use SebastianBergmann\CodeCoverage\CodeCoverage;
+use DOMDocument;
+use SebastianBergmann\CodeCoverage\Node\Directory;
 use SebastianBergmann\CodeCoverage\Node\File;
 use SebastianBergmann\CodeCoverage\Util\Filesystem;
 use SebastianBergmann\CodeCoverage\Util\Xml;
 use SebastianBergmann\CodeCoverage\WriteOperationFailedException;
 
+/**
+ * @internal This class is not covered by the backward compatibility promise for phpunit/php-code-coverage
+ *
+ * @no-named-arguments Parameter names are not covered by the backward compatibility promise for phpunit/php-code-coverage
+ */
 final class Cobertura
 {
     /**
@@ -30,23 +35,11 @@ final class Cobertura
      *
      * @throws WriteOperationFailedException
      */
-    public function process(CodeCoverage $coverage, ?string $target = null): string
+    public function process(Directory $report, ?string $target = null): string
     {
         $time = (string) time();
 
-        $report = $coverage->getReport();
-
-        $implementation = new DOMImplementation;
-
-        $documentType = $implementation->createDocumentType(
-            'coverage',
-            '',
-            'http://cobertura.sourceforge.net/xml/coverage-04.dtd',
-        );
-
-        $document             = $implementation->createDocument('', '', $documentType);
-        $document->xmlVersion = '1.0';
-        $document->encoding   = 'UTF-8';
+        $document = new DOMDocument('1.0', 'UTF-8');
 
         $coverageElement = $document->createElement('coverage');
 
