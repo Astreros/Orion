@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}ORION - Administration{% endblock %}
+{% block title %}Administration{% endblock %}
 
 {% block body %}
 <style>
@@ -9,12 +9,17 @@
 </style>
 
 <div class="example-wrapper">
-    <h1>ORION - Espace d'administration ✅</h1>
+    <h1>Accueil administration ✅</h1>
 
     {% if app.user %}
         <a href="{{ path('app_logout') }}">Déconnexion</a>
     {% endif %}
 
-    <img src="{{ QRCode }}" alt="QR Code" />
+    <br>
+    <br>
+
+    <a href="{{ path('show.qrcode') }}">Administration des QR Code</a>
+
+{#    <img src="{{ QRCode }}" alt="QR Code" />#}
 </div>
 {% endblock %}

@@ -27,7 +27,7 @@ class Badge
     #[ORM\Column]
     private ?bool $actif = null;
 
-    #[ORM\OneToOne(cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne]
     private ?Utilisateur $utilisateur = null;
 
     /**

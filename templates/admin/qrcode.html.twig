@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration QR Code{% endblock %}
+
+{% block body %}
+    <style>
+        .example-wrapper { margin: 1em auto; max-width: 800px; width: 95%; font: 18px/1.5 sans-serif; }
+        .example-wrapper code { background: #38D5BE; padding: 2px 6px; }
+    </style>
+
+    <div class="example-wrapper">
+        <h1>Administration des QR Code</h1>
+
+        {% if app.user %}
+            <a href="{{ path('app_logout') }}">Déconnexion</a>
+        {% endif %}
+
+        <br>
+        <br>
+
+        <a href="{{ path('show.admin') }}">Retour Accueil Administration</a>
+
+        <div class="container mt-4">
+            <h1>Liste des QR Codes</h1>
+
+            {% if qrCodes|length > 0 %}
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Code QR</th>
+                        <th>Date de création</th>
+                        <th>Date d'expiration</th>
+                        <th>Statut</th>
+                        <th>Utilisateur</th>
+                        <th>Actions</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for qrCode in qrCodes %}
+                        <tr>
+                            <td>
+                                {# Afficher l'aperçu du QR Code #}
+                                {% if qrCode.qrCodeImage is defined %}
+                                    <img src="{{ qrCode.qrCodeImage }}" alt="QR Code" style="width: 100px; height: 100px;">
+                                {% else %}
+                                    <span class="badge bg-secondary">Aucun aperçu</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ qrCode.dateCreation|date('d/m/Y H:i') }}</td>
+                            <td>{{ qrCode.dateExpiration|date('d/m/Y H:i') }}</td>
+                            <td>
+                                <span class="badge bg-{{ qrCode.actif ? 'success' : 'danger' }}">
+                                    {{ qrCode.actif ? 'Actif' : 'Inactif' }}
+                                </span>
+                            </td>
+                            <td>
+                                {% if qrCode.utilisateur is defined %}
+                                    {{ qrCode.utilisateur.nom }}
+                                {% else %}
+                                    <span class="badge bg-secondary">Aucun</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <div class="btn-group" role="group">
+                                    {% if qrCode.actif %}
+                                        <a href="{{ path('disable.qrcode', {'id': qrCode.id}) }}" class="btn btn-warning btn-sm">Désactiver</a>
+                                    {% else %}
+                                        <a href="{{ path('enable.qrcode', {'id': qrCode.id}) }}" class="btn btn-success btn-sm">Activer</a>
+                                    {% endif %}
+                                    <a href="{{ path('delete.qrcode', {'id': qrCode.id}) }}" class="btn btn-danger btn-sm" onclick="return confirm('Êtes-vous sûr de vouloir supprimer ce QR Code ?')">Supprimer</a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="alert alert-info">
+                    Aucun QR Code trouvé.
+                </div>
+            {% endif %}
+        </div>
+
+        {#    <img src="{{ QRCode }}" alt="QR Code" />#}
+    </div>
+{% endblock %}
