@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Code;
 use App\Entity\Utilisateur;
-use App\Service\EncryptionService;
+use DateMalformedStringException;
 use Doctrine\ORM\EntityManagerInterface;
 use Random\RandomException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -15,12 +15,12 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class CodeController extends AbstractController
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      * @throws RandomException
      */
     #[Route('/admin/add-code/{userId}', name: 'add.code', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function addCode(int $userId, EncryptionService $encryptionService, EntityManagerInterface $entityManager): Response
+    public function addCode(int $userId, EntityManagerInterface $entityManager): Response
     {
         // Récupère l'utilisateur
         $user = $entityManager->getRepository(Utilisateur::class)->find($userId);

@@ -4,7 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Badge;
 use App\Entity\Utilisateur;
-use App\Service\EncryptionService;
+use DateMalformedStringException;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,7 +14,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class BadgeController extends AbstractController
 {
     /**
-     * @throws \DateMalformedStringException
+     * @throws DateMalformedStringException
      */
     #[Route('/admin/add-badge/{userId}/{UID}', name: 'add.badge', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
