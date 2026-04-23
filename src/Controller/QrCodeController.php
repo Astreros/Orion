@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class QrCodeController extends AbstractController
 {
@@ -18,6 +19,7 @@ class QrCodeController extends AbstractController
      * @throws DateMalformedStringException
      */
     #[Route('/admin/add-qrcode/{userId}', name: 'add.qrcode', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function addQRCode(int $userId, TokenGeneratorService $tokenGeneratorService, EntityManagerInterface $entityManager): Response
     {
         // Récupère l'utilisateur
@@ -61,6 +63,7 @@ class QrCodeController extends AbstractController
 
     // Désactive un QR code
     #[Route('/admin/disable-qrcode/{id}', name: 'disable.qrcode', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function disableQRCode(QRCode $qrCode, EntityManagerInterface $entityManager): Response
     {
         $qrCode->setActif(false);
@@ -72,6 +75,7 @@ class QrCodeController extends AbstractController
 
     // Active un QR code
     #[Route('/admin/enable-qrcode/{id}', name: 'enable.qrcode', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function enableQRCode(QRCode $qrCode, EntityManagerInterface $entityManager): Response
     {
         $qrCode->setActif(true);
@@ -83,6 +87,7 @@ class QrCodeController extends AbstractController
 
     // Supprime un QR code
     #[Route('/admin/delete-qrcode/{id}', name: 'delete.qrcode', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
     public function deleteQRCode(QRCode $qrCode, EntityManagerInterface $entityManager): Response
     {
         $entityManager->remove($qrCode);

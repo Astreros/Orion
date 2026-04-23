@@ -15,8 +15,8 @@ class Code
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column]
-    private ?int $codePIN = null;
+    #[ORM\Column(type: 'string', length: 255)]
+    private ?string $codePIN = null;
 
     #[ORM\Column]
     private ?\DateTime $dateCreation = null;

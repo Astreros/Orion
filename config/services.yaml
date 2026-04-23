@@ -24,5 +24,9 @@ services:
         arguments:
             $encryptionKey: '%env(APP_TOKEN_ENCRYPTION_KEY)%'
 
+    App\Service\EncryptionService:
+        arguments:
+            $encryptionKey: '%env(ENCRYPTION_KEY)%'
+
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
