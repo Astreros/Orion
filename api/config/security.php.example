@@ -1,0 +1,13 @@
+@"
+<?php
+// ============================================================
+// SECURITY.PHP.EXAMPLE - Template de configuration sécurité
+// ============================================================
+// Copier ce fichier en 'security.php' et remplir avec VOS valeurs
+// security.php est ignoré par Git (ne jamais committer les secrets !)
+// ============================================================
+
+define('TOKEN_SECRET', 'VOTRE_TOKEN_SECRET_ICI');
+
+// ... (copier le reste de la logique depuis le security.php réel)
+"@ | Out-File -FilePath "C:\laragon\www\orion\api\config\security.php.example" -Encoding UTF8

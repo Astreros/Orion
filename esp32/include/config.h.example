@@ -1,0 +1,27 @@
+@"
+// ============================================================
+// CONFIG.H.EXAMPLE - Template de configuration Orion ESP32
+// ============================================================
+// Copier ce fichier en 'config.h' et remplir avec VOS valeurs
+// config.h est ignoré par Git (ne jamais committer les secrets !)
+// ============================================================
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// --- Configuration WiFi ---
+#define WIFI_SSID       "VOTRE_SSID_WIFI"
+#define WIFI_PASSWORD   "VOTRE_MOT_DE_PASSE_WIFI"
+
+// --- Configuration API ---
+#define API_BASE        "http://192.168.X.X/orion/api"
+#define API_TOKEN       "VOTRE_TOKEN_API_ICI"
+
+// --- Mode simulation Wokwi ---
+// #define WOKWI_SIM   // Décommenter pour simulation Wokwi
+
+// --- Badge de test (simulation) ---
+#define BADGE_AUTORISE  "AB:CD:EF:12"
+
+#endif // CONFIG_H
+"@ | Out-File -FilePath "C:\laragon\www\orion\esp32\include\config.h.example" -Encoding UTF8

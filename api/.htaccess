@@ -1,0 +1,10 @@
+# Transmettre le header Authorization à PHP (supprimé par Apache par défaut)
+RewriteEngine On
+RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+# Bloquer l'accès direct aux dossiers internes
+RewriteRule ^(config|functions|logs)/ - [F,L]
+
+# Optionnel : forcer HTTPS (à activer si certificat SSL configuré)
+# RewriteCond %{HTTPS} off
+# RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]

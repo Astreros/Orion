@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orion — Simulateur complet</title>
+<link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#070b14; --surface:#0d1525; --surface2:#111e35;
+  --border:#1a2a4a; --border2:#243a5a;
+  --blue:#4a9eff; --blue-dim:#1a3a6a; --blue-dark:#0a1a3a;
+  --green:#39d353; --green-dim:#0d3a1a;
+  --red:#e24b4a; --red-dim:#3a0d0d;
+  --amber:#f0a500; --amber-dim:#3a2800;
+  --purple:#a855f7; --purple-dim:#2d1254;
+  --text:#c8d8f0; --muted:#4a6a9a;
+  --font-mono:'Share Tech Mono',monospace;
+  --font-ui:'Rajdhani',sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui);min-height:100vh;padding:20px;}
+
+.header{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border);}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo svg{width:30px;height:30px;}
+.logo-title{font-size:24px;font-weight:700;letter-spacing:6px;color:var(--blue);}
+.logo-sub{font-size:10px;letter-spacing:3px;color:var(--muted);}
+.badge-session{margin-left:auto;font-size:10px;letter-spacing:2px;color:var(--muted);border:1px solid var(--border);padding:3px 8px;border-radius:4px;}
+
+.layout{display:grid;grid-template-columns:320px 1fr;gap:16px;max-width:1100px;}
+
+.panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;}
+.panel-title{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border);}
+
+/* Tabs */
+.tabs{display:flex;gap:2px;margin-bottom:14px;background:var(--bg);border-radius:8px;padding:3px;}
+.tab{flex:1;padding:8px;text-align:center;font-size:12px;font-weight:600;letter-spacing:1px;border-radius:6px;cursor:pointer;color:var(--muted);transition:all .2s;}
+.tab.active{color:var(--text);background:var(--surface2);}
+.tab-pin.active{color:var(--blue);}
+.tab-rfid.active{color:var(--green);}
+.tab-qr.active{color:var(--purple);}
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* Config */
+.cfg-row{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;}
+.cfg-row label{font-size:10px;letter-spacing:1px;color:var(--muted);}
+.cfg-row input{background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:7px 9px;width:100%;outline:none;transition:border-color .2s;}
+.cfg-row input:focus{border-color:var(--blue);}
+
+/* LCD */
+.lcd-wrap{background:#1a2a0a;border:2px solid #2a4a10;border-radius:6px;padding:10px 14px;margin-bottom:12px;font-family:var(--font-mono);min-height:54px;}
+.lcd-line{font-size:13px;color:#88dd44;letter-spacing:1px;line-height:1.8;white-space:pre;}
+
+/* LEDs */
+.leds{display:flex;gap:10px;margin-bottom:12px;}
+.led-wrap{display:flex;align-items:center;gap:6px;font-size:11px;letter-spacing:1px;color:var(--muted);}
+.led{width:12px;height:12px;border-radius:50%;background:#111;border:1px solid #222;transition:all .2s;}
+.led.on-green{background:var(--green);box-shadow:0 0 8px var(--green);border-color:var(--green);}
+.led.on-red{background:var(--red);box-shadow:0 0 8px var(--red);border-color:var(--red);}
+
+/* Clavier PIN */
+.keypad{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;}
+.key{height:46px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--font-ui);font-size:16px;font-weight:600;cursor:pointer;transition:all .1s;display:flex;align-items:center;justify-content:center;user-select:none;}
+.key:active,.key.pressed{background:var(--blue-dim);border-color:var(--blue);transform:scale(.94);}
+.key.key-sp{font-size:12px;color:var(--muted);}
+.key.key-ok{background:var(--green-dim);border-color:#1a4020;color:var(--green);}
+.key.key-ok:active{background:#1a4020;border-color:var(--green);}
+.key.key-cl{background:var(--red-dim);border-color:#4a1010;color:var(--red);}
+.key-hint{font-size:10px;color:var(--muted);text-align:center;letter-spacing:1px;}
+
+/* RFID */
+.rfid-wrap{margin-bottom:12px;}
+.rfid-presets{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px;}
+.rfid-btn{padding:10px 8px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--font-ui);font-size:12px;font-weight:600;cursor:pointer;text-align:center;transition:all .15s;}
+.rfid-btn:hover{background:var(--surface2);border-color:var(--green);}
+.rfid-btn .uid{font-family:var(--font-mono);font-size:10px;color:var(--muted);display:block;margin-top:2px;}
+.rfid-custom{display:flex;gap:6px;}
+.rfid-custom input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:8px;outline:none;}
+.rfid-custom input:focus{border-color:var(--green);}
+.rfid-scan{padding:8px 14px;background:var(--green-dim);border:1px solid var(--green);border-radius:6px;color:var(--green);font-family:var(--font-ui);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;white-space:nowrap;}
+.rfid-scan:hover{background:#1a4020;}
+
+/* QR */
+.qr-wrap{margin-bottom:12px;}
+.qr-visual{background:white;border-radius:8px;padding:12px;text-align:center;margin-bottom:10px;position:relative;overflow:hidden;}
+.qr-visual canvas{display:block;margin:0 auto;}
+.qr-tokens{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+.qr-token-btn{padding:9px 10px;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--font-ui);font-size:12px;font-weight:600;cursor:pointer;text-align:left;transition:all .15s;display:flex;align-items:center;gap:8px;}
+.qr-token-btn:hover{background:var(--surface2);border-color:var(--purple);}
+.qr-token-btn .tok{font-family:var(--font-mono);font-size:10px;color:var(--muted);}
+.qr-custom{display:flex;gap:6px;}
+.qr-custom input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-mono);font-size:11px;padding:8px;outline:none;}
+.qr-custom input:focus{border-color:var(--purple);}
+.qr-scan{padding:8px 14px;background:var(--purple-dim);border:1px solid var(--purple);border-radius:6px;color:var(--purple);font-family:var(--font-ui);font-size:12px;font-weight:600;cursor:pointer;letter-spacing:1px;white-space:nowrap;}
+
+/* Tests */
+.score-bar{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.score-text{font-size:20px;font-weight:700;color:var(--text);min-width:60px;}
+.score-sub{font-size:10px;letter-spacing:2px;color:var(--muted);}
+.progress{flex:1;height:5px;background:var(--border);border-radius:3px;overflow:hidden;}
+.progress-fill{height:100%;width:0%;background:var(--blue);border-radius:3px;transition:width .4s,background .4s;}
+.btn-run-all{width:100%;background:var(--blue-dim);border:1px solid var(--blue);border-radius:8px;color:var(--blue);font-family:var(--font-ui);font-size:13px;font-weight:700;padding:11px;cursor:pointer;letter-spacing:2px;text-transform:uppercase;transition:all .2s;margin-bottom:12px;}
+.btn-run-all:hover{background:#1a4a8a;}
+.btn-run-all:disabled{opacity:.4;cursor:not-allowed;}
+
+.test-group{margin-bottom:8px;}
+.test-group-title{font-size:10px;letter-spacing:2px;color:var(--muted);text-transform:uppercase;margin-bottom:6px;}
+.test-btn{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:var(--font-ui);font-size:13px;font-weight:500;padding:9px 12px;cursor:pointer;display:flex;align-items:center;gap:8px;transition:all .15s;margin-bottom:5px;text-align:left;}
+.test-btn:hover{background:var(--surface);border-color:var(--border2);}
+.test-btn .badge{margin-left:auto;font-size:10px;letter-spacing:1px;padding:2px 6px;border-radius:4px;font-weight:600;}
+.badge-ok{background:var(--green-dim);color:var(--green);}
+.badge-err{background:var(--red-dim);color:var(--red);}
+.badge-pending{background:var(--border);color:var(--muted);}
+
+/* Log */
+.log{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px;height:180px;overflow-y:auto;font-family:var(--font-mono);font-size:11px;}
+.log-line{margin-bottom:3px;line-height:1.5;}
+.log-ok{color:var(--green);}
+.log-err{color:var(--red);}
+.log-info{color:var(--blue);}
+.log-warn{color:var(--amber);}
+.log-dim{color:var(--muted);}
+.log-purple{color:var(--purple);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">
+    <svg viewBox="0 0 32 32" fill="none">
+      <rect x="6" y="12" width="20" height="14" rx="3" stroke="#4a9eff" stroke-width="1.5"/>
+      <path d="M10 12V9a6 6 0 0 1 12 0v3" stroke="#4a9eff" stroke-width="1.5" stroke-linecap="round"/>
+      <circle cx="16" cy="18.5" r="2.5" fill="#4a9eff"/>
+      <line x1="16" y1="21" x2="16" y2="23" stroke="#4a9eff" stroke-width="1.5" stroke-linecap="round"/>
+    </svg>
+    <div><div class="logo-title">ORION</div><div class="logo-sub">Simulateur ESP32 complet</div></div>
+  </div>
+  <div class="badge-session">BTS CIEL · SESSION 2026</div>
+</div>
+
+<div class="layout">
+<!-- ═══ COLONNE GAUCHE : ESP32 virtuel ═══ -->
+<div>
+  <!-- Config -->
+  <div class="panel">
+    <div class="panel-title">⚙ Configuration API</div>
+    <div class="cfg-row"><label>URL de base</label><input id="baseUrl" value="http://localhost/orion/api"></div>
+    <div class="cfg-row"><label>Bearer Token</label><input id="token" value="orion-token-secret-2026"></div>
+  </div>
+
+  <!-- ESP32 -->
+  <div class="panel">
+    <div class="panel-title">📟 ESP32-C3 — Simulation</div>
+
+    <!-- LCD -->
+    <div class="lcd-wrap">
+      <div class="lcd-line" id="lcd0">** ORION v1.0 **</div>
+      <div class="lcd-line" id="lcd1">Choisissez methode</div>
+    </div>
+
+    <!-- LEDs -->
+    <div class="leds">
+      <div class="led-wrap"><div class="led" id="ledVert"></div>GPIO 8 OK</div>
+      <div class="led-wrap"><div class="led" id="ledRouge"></div>GPIO 9 DENY</div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <div class="tab tab-pin active" onclick="switchTab('pin')">🔢 PIN</div>
+      <div class="tab tab-rfid" onclick="switchTab('rfid')">🔖 RFID</div>
+      <div class="tab tab-qr" onclick="switchTab('qr')">📷 QR Code</div>
+    </div>
+
+    <!-- ── PIN ── -->
+    <div class="tab-content active" id="tab-pin">
+      <div class="keypad">
+        <button class="key" onclick="k('1')">1</button>
+        <button class="key" onclick="k('2')">2</button>
+        <button class="key" onclick="k('3')">3</button>
+        <button class="key key-sp" onclick="k('A')">A</button>
+        <button class="key" onclick="k('4')">4</button>
+        <button class="key" onclick="k('5')">5</button>
+        <button class="key" onclick="k('6')">6</button>
+        <button class="key key-sp" onclick="k('B')">B</button>
+        <button class="key" onclick="k('7')">7</button>
+        <button class="key" onclick="k('8')">8</button>
+        <button class="key" onclick="k('9')">9</button>
+        <button class="key key-sp" onclick="k('C')">C</button>
+        <button class="key key-cl key-sp" onclick="k('*')">✕</button>
+        <button class="key" onclick="k('0')">0</button>
+        <button class="key key-ok key-sp" onclick="k('#')">#</button>
+        <button class="key key-sp" onclick="k('D')">D</button>
+      </div>
+      <div class="key-hint"># = Valider &nbsp;|&nbsp; * / A / D = Effacer</div>
+    </div>
+
+    <!-- ── RFID ── -->
+    <div class="tab-content" id="tab-rfid">
+      <div class="rfid-wrap">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:8px;letter-spacing:1px;">BADGES ENREGISTRÉS EN BASE</div>
+        <div class="rfid-presets">
+          <button class="rfid-btn" onclick="scanRFID('AB:CD:EF:12')">
+            👤 LEPRINI Jonathan<span class="uid">AB:CD:EF:12</span>
+          </button>
+          <button class="rfid-btn" onclick="scanRFID('DEMOADMIN01')">
+            👤 Admin Demo<span class="uid">DEMOADMIN01</span>
+          </button>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;">BADGE INCONNU (test refus)</div>
+        <div class="rfid-presets" style="margin-bottom:10px;">
+          <button class="rfid-btn" style="border-color:#4a1010;color:var(--red)" onclick="scanRFID('00:00:00:00')">
+            ⛔ Badge inconnu<span class="uid">00:00:00:00</span>
+          </button>
+          <button class="rfid-btn" style="border-color:#4a1010;color:var(--red)" onclick="scanRFID('FF:FF:FF:FF')">
+            ⛔ Badge expiré<span class="uid">FF:FF:FF:FF</span>
+          </button>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;">SAISIE MANUELLE</div>
+        <div class="rfid-custom">
+          <input id="rfidInput" placeholder="AB:CD:EF:12" value="AB:CD:EF:12">
+          <button class="rfid-scan" onclick="scanRFIDManuel()">▶ Scanner</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── QR CODE ── -->
+    <div class="tab-content" id="tab-qr">
+      <div class="qr-wrap">
+        <div id="qrDisplay" style="background:#fff;border-radius:8px;padding:10px;text-align:center;margin-bottom:10px;min-height:80px;display:flex;align-items:center;justify-content:center;">
+          <span style="color:#999;font-size:12px;">Sélectionnez un QR Code</span>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;">QR CODES ENREGISTRÉS</div>
+        <div class="qr-tokens">
+          <button class="qr-token-btn" onclick="scanQR('QRTEST123')">
+            ✅ QR Code valide<span class="tok">QRTEST123</span>
+          </button>
+          <button class="qr-token-btn" style="border-color:#4a1010;color:var(--red)" onclick="scanQR('QRCODE-INCONNU-999')">
+            ⛔ QR Code inconnu<span class="tok">QRCODE-INCONNU-999</span>
+          </button>
+        </div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:6px;letter-spacing:1px;">TOKEN PERSONNALISÉ</div>
+        <div class="qr-custom">
+          <input id="qrInput" placeholder="MON-TOKEN-QR" value="QRTEST123">
+          <button class="qr-scan" onclick="scanQRManuel()">▶ Scanner</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ COLONNE DROITE : Tests + Log ═══ -->
+<div>
+  <div class="panel">
+    <div class="panel-title">🧪 Tests automatisés</div>
+    <div class="score-bar">
+      <div><div class="score-text" id="scoreText">0 / 8</div><div class="score-sub">TESTS RÉUSSIS</div></div>
+      <div class="progress"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+    <button class="btn-run-all" id="btnRunAll" onclick="lancerTous()">▶ Lancer tous les tests</button>
+
+    <div class="test-group">
+      <div class="test-group-title">🔖 Badge RFID</div>
+      <button class="test-btn" onclick="T('badge-ok','/badge.php',{rfid:'AB:CD:EF:12'},{},200,'Badge autorisé (AB:CD:EF:12)')">
+        Badge autorisé<span class="badge badge-pending" id="badge-badge-ok">–</span></button>
+      <button class="test-btn" onclick="T('badge-err','/badge.php',{rfid:'00:00:00:00'},{},403,'Badge refusé (00:00:00:00)')">
+        Badge refusé<span class="badge badge-pending" id="badge-badge-err">–</span></button>
+    </div>
+
+    <div class="test-group">
+      <div class="test-group-title">📷 QR Code</div>
+      <button class="test-btn" onclick="T('qr-ok','/qrcode.php',{token:'QRTEST123'},{},200,'QR autorisé')">
+        QR autorisé<span class="badge badge-pending" id="badge-qr-ok">–</span></button>
+      <button class="test-btn" onclick="T('qr-err','/qrcode.php',{token:'QRCODE-INCONNU-999'},{},403,'QR refusé')">
+        QR refusé<span class="badge badge-pending" id="badge-qr-err">–</span></button>
+    </div>
+
+    <div class="test-group">
+      <div class="test-group-title">🔢 Code PIN</div>
+      <button class="test-btn" onclick="T('pin-ok','/pin.php',{pin:'1234'},{},200,'PIN autorisé (1234)')">
+        PIN autorisé<span class="badge badge-pending" id="badge-pin-ok">–</span></button>
+      <button class="test-btn" onclick="T('pin-err','/pin.php',{pin:'0000'},{},403,'PIN refusé (0000)')">
+        PIN refusé<span class="badge badge-pending" id="badge-pin-err">–</span></button>
+    </div>
+
+    <div class="test-group">
+      <div class="test-group-title">🔐 Sécurité</div>
+      <button class="test-btn" onclick="T('sec-401','/badge.php',{rfid:'AB:CD:EF:12'},{'noToken':true},401,'Sans token → 401')">
+        Sans token Bearer → 401<span class="badge badge-pending" id="badge-sec-401">–</span></button>
+      <button class="test-btn" onclick="T('sec-400','/badge.php',{rfid:'pas_du_hex!!'},{}  ,400,'RFID invalide → 400')">
+        RFID invalide → 400<span class="badge badge-pending" id="badge-sec-400">–</span></button>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="panel-title" style="display:flex;justify-content:space-between">
+      <span>📋 Console série</span>
+      <button onclick="document.getElementById('logDiv').innerHTML=''" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:10px;letter-spacing:1px;">VIDER</button>
+    </div>
+    <div class="log" id="logDiv"></div>
+  </div>
+</div>
+</div>
+
+<script>
+// ─── Config ───────────────────────────────────────────────────────────────────
+const url   = () => document.getElementById('baseUrl').value.replace(/\/$/,'');
+const token = () => document.getElementById('token').value;
+const hdrs  = (noToken=false) => {
+  const h = {'Content-Type':'application/json'};
+  if (!noToken) h['Authorization'] = 'Bearer ' + token();
+  return h;
+};
+
+// ─── Log ──────────────────────────────────────────────────────────────────────
+function log(msg, type='info') {
+  const d = document.getElementById('logDiv');
+  const t = new Date().toLocaleTimeString('fr',{hour12:false});
+  const div = document.createElement('div');
+  div.className = `log-line log-${type}`;
+  div.textContent = `[${t}] ${msg}`;
+  d.appendChild(div);
+  d.scrollTop = d.scrollHeight;
+}
+
+// ─── LCD + LEDs ───────────────────────────────────────────────────────────────
+function lcd(l0, l1='') {
+  document.getElementById('lcd0').textContent = l0.substring(0,16).padEnd(16);
+  document.getElementById('lcd1').textContent = l1.substring(0,16).padEnd(16);
+}
+function led(color, on) {
+  document.getElementById(color==='green'?'ledVert':'ledRouge').className = 'led'+(on?` on-${color}`:'');
+}
+function resetESP() {
+  setTimeout(()=>{ led('green',false); led('red',false); lcd('** ORION v1.0 **','Choisissez methode'); }, 3000);
+}
+
+// ─── Tabs ─────────────────────────────────────────────────────────────────────
+function switchTab(t) {
+  document.querySelectorAll('.tab').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(el=>el.classList.remove('active'));
+  document.querySelector(`.tab-${t}`).classList.add('active');
+  document.getElementById(`tab-${t}`).classList.add('active');
+}
+
+// ─── Appel API générique ──────────────────────────────────────────────────────
+async function callAPI(endpoint, body, noToken=false) {
+  const r = await fetch(url()+endpoint, {
+    method:'POST', headers:hdrs(noToken), body:JSON.stringify(body)
+  });
+  let data = {};
+  try { data = await r.json(); } catch(e) {}
+  return { status:r.status, data };
+}
+
+// ─── PIN ──────────────────────────────────────────────────────────────────────
+let pin='', busy=false;
+async function k(t) {
+  if (busy) return;
+  if (t==='*'||t==='A'||t==='D') {
+    pin=''; lcd('** ORION v1.0 **','Entrez votre PIN'); return;
+  }
+  if (t==='#') { await validerPIN(); return; }
+  if (!'0123456789'.includes(t)) return;
+  if (pin.length<6) {
+    pin+=t;
+    lcd('PIN: '+'*'.repeat(pin.length)+'-'.repeat(6-pin.length), '# valid  * effa.');
+    if (pin.length===6) { await validerPIN(); }
+  }
+}
+async function validerPIN() {
+  if (pin.length<4) return;
+  busy=true;
+  lcd('Verification...','API en cours... ');
+  log(`[PIN] Envoi PIN ${'*'.repeat(pin.length)}`, 'dim');
+  try {
+    const {status,data} = await callAPI('/pin.php',{pin});
+    if (status===200) {
+      lcd('ACCES AUTORISE !','Bonjour '+(data.prenom||'').substring(0,8));
+      led('green',true); log(`[PIN] ✓ AUTORISÉ — ${data.prenom||''}`, 'ok');
+    } else {
+      lcd('CODE INCORRECT !','Reessayez...    ');
+      led('red',true); log(`[PIN] ✗ REFUSÉ (HTTP ${status})`, 'err');
+    }
+  } catch(e) {
+    lcd('Erreur reseau ! ','Verif. serveur..'); log('[PIN] Erreur réseau', 'warn');
+  }
+  pin=''; busy=false; resetESP();
+}
+
+// ─── RFID ─────────────────────────────────────────────────────────────────────
+async function scanRFID(rfid) {
+  if (busy) return;
+  busy=true;
+  lcd('Lecture badge...', rfid.substring(0,16));
+  log(`[RFID] Badge détecté : ${rfid}`, 'info');
+  try {
+    const {status,data} = await callAPI('/badge.php',{rfid});
+    if (status===200) {
+      lcd('ACCES AUTORISE !','Bonjour '+(data.prenom||'').substring(0,8));
+      led('green',true); log(`[RFID] ✓ AUTORISÉ — ${data.prenom||''} (${rfid})`, 'ok');
+    } else {
+      lcd('BADGE REFUSE !  ','Acces interdit  ');
+      led('red',true); log(`[RFID] ✗ REFUSÉ (HTTP ${status}) — ${rfid}`, 'err');
+    }
+  } catch(e) {
+    lcd('Erreur reseau ! ',''); log('[RFID] Erreur réseau', 'warn');
+  }
+  busy=false; resetESP();
+}
+function scanRFIDManuel() {
+  const v = document.getElementById('rfidInput').value.trim();
+  if (v) scanRFID(v);
+}
+
+// ─── QR Code ──────────────────────────────────────────────────────────────────
+async function scanQR(token_val) {
+  if (busy) return;
+  // Afficher QR visuel
+  afficherQR(token_val);
+  busy=true;
+  lcd('Lecture QR...   ', token_val.substring(0,16));
+  log(`[QR] Token scanné : ${token_val}`, 'purple');
+  try {
+    const {status,data} = await callAPI('/qrcode.php',{token:token_val});
+    if (status===200) {
+      lcd('ACCES AUTORISE !','Bonjour '+(data.prenom||'').substring(0,8));
+      led('green',true); log(`[QR] ✓ AUTORISÉ — ${data.prenom||''} (${token_val})`, 'ok');
+    } else {
+      lcd('QR REFUSE !     ','Expire ou invali');
+      led('red',true); log(`[QR] ✗ REFUSÉ (HTTP ${status}) — ${token_val}`, 'err');
+    }
+  } catch(e) {
+    lcd('Erreur reseau ! ',''); log('[QR] Erreur réseau', 'warn');
+  }
+  busy=false; resetESP();
+}
+function scanQRManuel() {
+  const v = document.getElementById('qrInput').value.trim();
+  if (v) scanQR(v);
+}
+
+// QR visuel simplifié (grille de pixels noirs/blancs)
+function afficherQR(text) {
+  const d = document.getElementById('qrDisplay');
+  // Générateur QR simplifié — crée un pattern visuel basé sur le hash du texte
+  let hash = 0;
+  for (let i=0; i<text.length; i++) hash = ((hash<<5)-hash)+text.charCodeAt(i);
+  const size = 10;
+  let html = `<div style="display:inline-block;border:3px solid #000;padding:4px;background:#fff">`;
+  for (let r=0; r<size; r++) {
+    html += '<div style="display:flex">';
+    for (let c=0; c<size; c++) {
+      const v = (hash ^ (r*13+c*7) ^ (r*c)) & 1;
+      // Coins fixes pour ressembler à un vrai QR
+      const coin = (r<3&&c<3)||(r<3&&c>=size-3)||(r>=size-3&&c<3);
+      const bg = coin ? '#000' : (v ? '#000' : '#fff');
+      html += `<div style="width:12px;height:12px;background:${bg}"></div>`;
+    }
+    html += '</div>';
+  }
+  html += '</div>';
+  d.innerHTML = html;
+}
+
+// ─── Tests automatisés ────────────────────────────────────────────────────────
+let score=0, total=0;
+function setBadge(id, ok, code) {
+  const el = document.getElementById('badge-'+id);
+  el.textContent = ok ? `✓ ${code}` : `✗ ${code}`;
+  el.className = 'badge '+(ok?'badge-ok':'badge-err');
+}
+function updateScore() {
+  document.getElementById('scoreText').textContent = `${score} / ${total}`;
+  const pct = total>0?(score/total*100):0;
+  const f = document.getElementById('progressFill');
+  f.style.width = pct+'%';
+  f.style.background = pct===100?'var(--green)':pct>=50?'var(--amber)':'var(--red)';
+}
+
+async function T(id, ep, body, opts, attendu, label) {
+  total++;
+  log(`→ ${label}`, 'dim');
+  try {
+    const noToken = opts && opts.noToken;
+    const {status,data} = await callAPI(ep, body, noToken);
+    const ok = status===attendu;
+    if (ok) score++;
+    setBadge(id, ok, status);
+    log(`  ${ok?'✓':'✗'} HTTP ${status} (attendu ${attendu})`, ok?'ok':'err');
+    updateScore();
+    return ok;
+  } catch(e) {
+    setBadge(id, false, 'ERR');
+    log(`  ✗ Erreur réseau`, 'warn');
+    updateScore();
+    return false;
+  }
+}
+
+async function lancerTous() {
+  const btn = document.getElementById('btnRunAll');
+  btn.disabled=true; btn.textContent='⏳ Tests en cours...';
+  score=0; total=0; updateScore();
+  document.querySelectorAll('.badge').forEach(b=>{b.textContent='…';b.className='badge badge-pending';});
+
+  log('━━━ Lancement des 8 tests ━━━', 'info');
+  const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+  await T('badge-ok','/badge.php',{rfid:'AB:CD:EF:12'},{},200,'Badge RFID autorisé'); await sleep(150);
+  await T('badge-err','/badge.php',{rfid:'00:00:00:00'},{},403,'Badge RFID refusé');  await sleep(150);
+  await T('qr-ok','/qrcode.php',{token:'QRTEST123'},{},200,'QR Code autorisé');       await sleep(150);
+  await T('qr-err','/qrcode.php',{token:'QRCODE-INCONNU-999'},{},403,'QR Code refusé');await sleep(150);
+  await T('pin-ok','/pin.php',{pin:'1234'},{},200,'PIN autorisé');                     await sleep(150);
+  await T('pin-err','/pin.php',{pin:'0000'},{},403,'PIN refusé');                      await sleep(150);
+  await T('sec-401','/badge.php',{rfid:'AB:CD:EF:12'},{noToken:true},401,'Sans token');await sleep(150);
+  await T('sec-400','/badge.php',{rfid:'pas_du_hex!!'},{}  ,400,'RFID invalide');
+
+  const ok = score===total;
+  log(`━━━ ${score}/${total} ${ok?'✓ TOUS PASSÉS !':`✗ ${total-score} ÉCHEC(S)`}`, ok?'ok':'err');
+  btn.disabled=false; btn.textContent='▶ Lancer tous les tests';
+}
+
+// Init
+log('[ORION] Simulateur complet démarré', 'info');
+log('[ORION] PIN + RFID + QR Code disponibles', 'dim');
+</script>
+</body>
+</html>
