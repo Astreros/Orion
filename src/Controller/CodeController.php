@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Code;
 use App\Entity\Utilisateur;
+use DateInterval;
 use DateMalformedStringException;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Random\RandomException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -38,8 +41,8 @@ class CodeController extends AbstractController
             $entityManager->flush();
         }
 
-        $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
-        $dateExpiration = (clone $date)->add(new \DateInterval('P1Y'));
+        $date = new DateTime('now', new DateTimeZone('Europe/Paris'));
+        $dateExpiration = (clone $date)->add(new DateInterval('P1Y'));
 
         $codePIN = random_int(100000, 999999);
         $hashedCodePIN = password_hash((string)$codePIN, PASSWORD_BCRYPT);

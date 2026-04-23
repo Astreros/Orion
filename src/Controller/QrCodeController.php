@@ -5,7 +5,10 @@ namespace App\Controller;
 use App\Entity\QRCode;
 use App\Entity\Utilisateur;
 use App\Service\TokenGeneratorService;
+use DateInterval;
 use DateMalformedStringException;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -42,8 +45,8 @@ class QrCodeController extends AbstractController
         $data = ['user_id' => $user->getId()];
         $token = $tokenGeneratorService->generateToken($data, 3600);
 
-        $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
-        $dateExpiration = (clone $date)->add(new \DateInterval('PT3600S'));
+        $date = new DateTime('now', new DateTimeZone('Europe/Paris'));
+        $dateExpiration = (clone $date)->add(new DateInterval('PT3600S'));
 
         // Créer et sauvegarder le QR code
         $qrCode = new QRCode();

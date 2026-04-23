@@ -4,7 +4,10 @@ namespace App\Controller;
 
 use App\Entity\Badge;
 use App\Entity\Utilisateur;
+use DateInterval;
 use DateMalformedStringException;
+use DateTime;
+use DateTimeZone;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -36,8 +39,8 @@ class BadgeController extends AbstractController
             $entityManager->flush();
         }
 
-        $date = new \DateTime('now', new \DateTimeZone('Europe/Paris'));
-        $dateExpiration = (clone $date)->add(new \DateInterval('P1Y'));
+        $date = new DateTime('now', new DateTimeZone('Europe/Paris'));
+        $dateExpiration = (clone $date)->add(new DateInterval('P1Y'));
 
         // Créer et sauvegarder
         $badge = new Badge();
