@@ -12,3 +12,32 @@
 .idea/
 .vscode/
 .DS_Store
+
+# ============================================================
+# Branche esp32_1000An (Milan)
+# ============================================================
+
+# Secrets ESP32 (WiFi, tokens)
+esp32/include/config.h
+esp32/.pio/
+esp32/build/
+esp32/.vscode/
+
+# Fichier securite API avec token
+api/config/security.php
+
+# Interface touch avec token embarque
+esp32/pin_interface.html
+
+# Fichiers systeme divers
+*.swp
+*.tmp
+Thumbs.db
+
+# Logs d'acces (RGPD - donnees personnelles)
+api/logs/*.log
+!api/logs/.gitkeep
+
+# Logs d'acces (RGPD - donnees personnelles)
+api/logs/*.log
+!api/logs/.gitkeep
