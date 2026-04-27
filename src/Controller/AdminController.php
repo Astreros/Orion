@@ -7,16 +7,19 @@ use App\Service\QrCodeGeneratorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 final class AdminController extends AbstractController
 {
     #[Route('/admin', name: 'show.admin')]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(): Response
     {
         return $this->render('admin/index.html.twig');
     }
 
     #[Route('/admin/qrcode', name: 'show.qrcode')]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminQrCode(QRCodeRepository $QRCodeRepository, QrCodeGeneratorService $qrCodeGeneratorService): Response
     {
         $qrCodes = $QRCodeRepository->findAll();
@@ -32,12 +35,14 @@ final class AdminController extends AbstractController
     }
 
     #[Route('/admin/code', name: 'show.code')]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminCode(): Response
     {
         return $this->render('admin/code.html.twig');
     }
 
     #[Route('/admin/badge', name: 'show.badge')]
+    #[IsGranted('ROLE_ADMIN')]
     public function adminBadge(): Response
     {
         return $this->render('admin/badge.html.twig');

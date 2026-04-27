@@ -14,7 +14,7 @@ class TokenGeneratorService
     }
 
     /**
-     * Génère un token JWT chiffré.
+     * Génère un token JWT (JSON WEB TOKEN) chiffré
      */
     public function generateToken(array $data, int $lifetime): string
     {
