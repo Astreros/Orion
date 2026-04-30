@@ -47,4 +47,11 @@ final class AdminController extends AbstractController
     {
         return $this->render('admin/badge.html.twig');
     }
+
+    #[Route('/admin/utilisateur', name: 'show.user')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminUser(): Response
+    {
+        return $this->render('admin/user.html.twig');
+    }
 }
