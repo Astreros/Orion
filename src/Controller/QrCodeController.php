@@ -59,7 +59,7 @@ class QrCodeController extends AbstractController
         $entityManager->persist($qrCode);
         $entityManager->flush();
 
-        // Redirige vers l'espace d'administration
+        // Redirige vers l'espace d'administration des QR code
         $this->addFlash('success', 'QR Code généré avec succès.');
         return $this->redirectToRoute('show.qrcode');
     }

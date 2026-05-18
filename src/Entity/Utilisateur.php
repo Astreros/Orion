@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
+use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -32,9 +33,11 @@ class Utilisateur implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 2, max: 255, minMessage: "Le nom doit faire au moins {{ limit }} caractères.")]
     private ?string $nom = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\Length(min: 2, max: 255, minMessage: "Le prénom doit faire au moins {{ limit }} caractères.")]
     private ?string $prenom = null;
 
     #[ORM\Column]
