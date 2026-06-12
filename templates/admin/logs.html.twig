@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Administration Code PIN{% endblock %}
+{% block title %}Administration{% endblock %}
 
 {% block body %}
     <style>
@@ -10,7 +10,7 @@
     </style>
 
     <div class="example-wrapper">
-        <h1>Administration des Code PIN</h1>
+        <h1>Administration</h1>
 
         {% if app.user %}
             <a href="{{ path('app_logout') }}">Déconnexion</a>
@@ -22,39 +22,37 @@
         <a href="{{ path('show.admin') }}">Retour Accueil Administration</a>
 
         <div class="container mt-4">
-            <h1>Liste des Code PIN</h1>
+            <h1>Activités</h1>
 
             <br>
             <br>
 
-            {% if users|length > 0 %}
+            {% if logs|length > 0 %}
                 <table class="table table-striped">
                     <thead>
                     <tr>
-                        <th>Nom</th>
-                        <th>Prénom</th>
-                        <th>E-mail</th>
-                        <th>Actions</th>
+                        <th>Date/heure</th>
+                        <th>Niveau alerte</th>
+                        <th>Commentaire</th>
+                        <th>Type d'identification</th>
+                        <th>Localisation</th>
                     </tr>
                     </thead>
                     <tbody>
-                    {% for user in users %}
+                    {% for log in logs %}
                         <tr>
-                            <td>{{ user.nom }}</td>
-                            <td>{{ user.prenom }}</td>
-                            <td>{{ user.email }}</td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <a href="{{ path('add.code', {'userId': user.id}) }}" class="btn btn-danger btn-sm">Générer un code PIN</a>
-                                </div>
-                            </td>
+                            <td>{{ log.dateHeure|date('Y-m-d H:i:s')}}</td>
+                            <td>{{ log.nivAlerte }}</td>
+                            <td>{{ log.commentaire }}</td>
+                            <td>{{ log.typeIdentification}}</td>
+                            <td>{{ log.localisation }}</td>
                         </tr>
                     {% endfor %}
                     </tbody>
                 </table>
             {% else %}
                 <div class="alert alert-info">
-                    Aucun utilisateur trouvé.
+                    Aucune activités trouvée.
                 </div>
             {% endif %}
         </div>

@@ -50,7 +50,7 @@ class CodeController extends AbstractController
         // Créer et sauvegarder
         $code = new Code();
         $code->setUtilisateur($user);
-        $code->setCodePIN($hashedCodePIN);
+        $code->setCodePIN($codePIN);
         $code->setDateCreation($date);
         $code->setDateExpiration($dateExpiration);
         $code->setActif(true);

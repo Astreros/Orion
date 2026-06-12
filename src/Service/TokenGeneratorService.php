@@ -13,7 +13,7 @@ class TokenGeneratorService
         $this->encryptionKey = $encryptionKey;
     }
 
-     // Génère un token JWT (JSON WEB TOKEN)
+    // Génère un token JWT (JSON WEB TOKEN)
     public function generateToken(array $data, int $lifetime): string
     {
         // Champ standardisé défini par la RFC 7519 pour les JWT

@@ -51,7 +51,7 @@ class Code
         return $this->codePIN;
     }
 
-    public function setCodePIN(int $codePIN): static
+    public function setCodePIN(string $codePIN): static
     {
         $this->codePIN = $codePIN;
 

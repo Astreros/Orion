@@ -42,19 +42,68 @@ class UserController extends AbstractController
 
     #[Route('/admin/update-user/{userId}', name: 'update.user', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function updateUser(): Response
+    public function updateUser(int $userId, Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
+        $user = $entityManager->getRepository(Utilisateur::class)->find($userId);
 
+        if (!$user) {
+            throw $this->createNotFoundException('Utilisateur non trouvé');
+        }
 
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Gérer le mot de passe (uniquement s'il est fourni)
+            $plainPassword = $form->get('password')->getData();
+            if (!empty($plainPassword)) {
+                $hashedPassword = $passwordHasher->hashPassword($user, $plainPassword);
+                $user->setPassword($hashedPassword);
+            }
+
+            $entityManager->persist($user);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('show.user');
+        }
+
+        $entityManager->flush();
+
+        return $this->render('admin/add_user.html.twig', [
+            'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/disable-user/{id}', name: 'disable.user', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function disableUser(Utilisateur $user, EntityManagerInterface $entityManager): Response
+    {
+        $user->setActif(false);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Utilisateur désactivé avec succès.');
         return $this->redirectToRoute('show.user');
     }
 
-    #[Route('/admin/delete-user/{userId}', name: 'delete.user', methods: ['GET', 'POST'])]
+    #[Route('/admin/enable-user/{id}', name: 'enable.user', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
-    public function deleteUser(): Response
+    public function enableUser(Utilisateur $user, EntityManagerInterface $entityManager): Response
     {
+        $user->setActif(true);
+        $entityManager->flush();
 
+        $this->addFlash('success', 'Utilisateur activé avec succès.');
+        return $this->redirectToRoute('show.user');
+    }
 
+    #[Route('/admin/delete-user/{id}', name: 'delete.user', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function deleteUser(Utilisateur $user, EntityManagerInterface $entityManager): Response
+    {
+        $entityManager->remove($user);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Utilisateur supprimé avec succès.');
         return $this->redirectToRoute('show.user');
     }
 }

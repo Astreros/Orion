@@ -28,6 +28,7 @@ class UserType extends AbstractType
             ])
             ->add('password', PasswordType::class, [
                 'label' => 'Mot de passe',
+                'required' => false,
                 'mapped' => false, // On ne lie pas directement à l'entité, car on va hacher le mot de passe
             ])
             ->add('actif', CheckboxType::class, [

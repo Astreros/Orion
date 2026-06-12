@@ -2,7 +2,10 @@
 
 namespace App\Controller;
 
+use App\Entity\LogAccess;
+use App\Repository\LogAccessRepository;
 use App\Repository\QRCodeRepository;
+use App\Repository\UtilisateurRepository;
 use App\Service\QrCodeGeneratorService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,9 +23,10 @@ final class AdminController extends AbstractController
 
     #[Route('/admin/qrcode', name: 'show.qrcode')]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminQrCode(QRCodeRepository $QRCodeRepository, QrCodeGeneratorService $qrCodeGeneratorService): Response
+    public function adminQrCode(UtilisateurRepository $utilisateurRepository, QRCodeRepository $QRCodeRepository, QrCodeGeneratorService $qrCodeGeneratorService): Response
     {
         $qrCodes = $QRCodeRepository->findAll();
+        $users = $utilisateurRepository->findAll();
 
         // Générer les aperçus des QR codes
         foreach ($qrCodes as $qrCode) {
@@ -31,14 +35,19 @@ final class AdminController extends AbstractController
 
         return $this->render('admin/qrcode.html.twig', [
             'qrCodes' => $qrCodes,
+            'users' => $users,
         ]);
     }
 
     #[Route('/admin/code', name: 'show.code')]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminCode(): Response
+    public function adminCode(UtilisateurRepository $utilisateurRepository): Response
     {
-        return $this->render('admin/code.html.twig');
+        $users = $utilisateurRepository->findAll();
+
+        return $this->render('admin/code.html.twig', [
+            'users' => $users,
+        ]);
     }
 
     #[Route('/admin/badge', name: 'show.badge')]
@@ -50,8 +59,23 @@ final class AdminController extends AbstractController
 
     #[Route('/admin/utilisateur', name: 'show.user')]
     #[IsGranted('ROLE_ADMIN')]
-    public function adminUser(): Response
+    public function adminUser(UtilisateurRepository $userRepository): Response
     {
-        return $this->render('admin/user.html.twig');
+        $users = $userRepository->findAll();
+
+        return $this->render('admin/user.html.twig', [
+            'users' => $users,
+        ]);
+    }
+
+    #[Route('/admin/logs', name: 'show.logs')]
+    #[IsGranted('ROLE_ADMIN')]
+    public function adminLogs(LogAccessRepository $logsRepository): Response
+    {
+        $logs = $logsRepository->findAll();
+
+        return $this->render('admin/logs.html.twig', [
+            'logs' => $logs,
+        ]);
     }
 }

@@ -6,6 +6,10 @@
     <div class="">
         <h1>Ajouter un utilisateur</h1>
 
+        <a href="{{ path('show.admin') }}">Retour Accueil Administration</a>
+        <br>
+        <br>
+
         {# Afficher les messages flash #}
         {% for message in app.flashes('success') %}
             <div class="">

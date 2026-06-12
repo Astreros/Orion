@@ -38,6 +38,15 @@ class LogAccess
     #[ORM\ManyToOne(inversedBy: 'logAccesses')]
     private ?Porte $porte = null;
 
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $nivAlerte = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?float $tension = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $localisation = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -135,6 +144,42 @@ class LogAccess
     public function setPorte(?Porte $porte): static
     {
         $this->porte = $porte;
+
+        return $this;
+    }
+
+    public function getNivAlerte(): ?string
+    {
+        return $this->nivAlerte;
+    }
+
+    public function setNivAlerte(?string $nivAlerte): static
+    {
+        $this->nivAlerte = $nivAlerte;
+
+        return $this;
+    }
+
+    public function getTension(): ?float
+    {
+        return $this->tension;
+    }
+
+    public function setTension(?float $tension): static
+    {
+        $this->tension = $tension;
+
+        return $this;
+    }
+
+    public function getLocalisation(): ?string
+    {
+        return $this->localisation;
+    }
+
+    public function setLocalisation(?string $localisation): static
+    {
+        $this->localisation = $localisation;
 
         return $this;
     }
