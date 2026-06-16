@@ -1,5 +1,3 @@
-<img src="assets/images/logo.png" alt="CritiPixel" width="200" />
-
 # Orion
 
 ## Pré-requis
