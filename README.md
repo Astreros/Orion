@@ -25,7 +25,7 @@ docker compose up -d
 ## Configuration
 
 ### Base de données
-Actuellement, le fichier `.env` est configuré pour la base de données MariaDB mise en place dans `docker-compose.yml`.
+Actuellement, le fichier `.env` est configuré pour la base de données MariaDB.
 Cependant, vous pouvez créer un fichier `.env.local` si nécessaire pour configurer l'accès à la base de données.
 Exemple :
 ```dotenv
@@ -70,13 +70,6 @@ symfony console doctrine:fixtures:load -n --purge-with-truncate
 symfony console sass:build
 ```
 *Note : le fichier `.symfony.local.yaml` est configuré pour surveiller les fichiers SASS et les compiler automatiquement quand vous lancez le serveur web de Symfony.*
-
-### Tests
-```bash
-symfony php bin/phpunit
-```
-
-*Note : Penser à charger les fixtures avant chaque éxécution des tests.*
 
 ### Serveur web
 ```bash
