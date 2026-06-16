@@ -29,7 +29,7 @@ Actuellement, le fichier `.env` est configuré pour la base de données MariaDB.
 Cependant, vous pouvez créer un fichier `.env.local` si nécessaire pour configurer l'accès à la base de données.
 Exemple :
 ```dotenv
-DATABASE_URL=mysql://root:Password123!@host:3306/criti-pixel
+DATABASE_URL=mysql://root:Password123!@host:3306/orion
 ```
 
 ### PHP (optionnel)
